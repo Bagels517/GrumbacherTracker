@@ -12,16 +12,22 @@ import edu.ycp.cs320.jporter7.controller.PopulationCounterController;
 import edu.ycp.cs320.jporter7.model.PopulationCounter;
 import edu.ycp.cs320.jporter7.model.User;
 import edu.ycp.cs320.jporter7.populationdb.persist.IDatabase;
+import edu.ycp.cs320.jporter7.simulator.SwipeSimulator;
+import javafx.scene.input.SwipeEvent;
 
 public class IndexServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	private IDatabase db;
+	private User newSwipeUser = new User();
+	private SwipeSimulator swipeSim = new SwipeSimulator(newSwipeUser, db);
+	private int counter;
 
     @Override
     public void init() throws ServletException
     {
         this.db = (IDatabase)getServletContext().getAttribute("database");
+        this.counter = 22;
     }
 	
 	
@@ -86,6 +92,11 @@ public class IndexServlet extends HttpServlet {
 		else if (req.getParameter("RockWall") != null)
 		{
 			resp.sendRedirect(req.getContextPath() + "/rockWall");
+		}
+		else if (req.getParameter("Test Button") != null)
+		{
+			swipeSim.swipe(newSwipeUser, db, counter++);
+			resp.sendRedirect(req.getContextPath() + "/index");
 		}
 		else
 		{

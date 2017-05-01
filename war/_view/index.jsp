@@ -15,6 +15,15 @@
 		
 		<form action="${pageContext.servletContext.contextPath}/index" method="post">
 			<table align="center">
+			
+			 <%-- test button --%>
+				<tr>
+					<td><input type="Submit" name="Test Button" value="Test Button"></td>
+				
+				</tr>
+				
+				
+				
 				<tr>
 					<td><input type="Submit" name="TotalPopulation" value="Total Population"></td>
 					<td>${model.popTotal}</td>
