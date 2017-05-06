@@ -2,6 +2,7 @@ package edu.ycp.cs320.jporter7.servlet;
 
 import java.io.IOException;
 
+import javax.print.attribute.SetOfIntegerSyntax;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -22,7 +23,8 @@ public class IndexServlet extends HttpServlet {
 	private User newSwipeUser = new User();
 	private SwipeSimulator swipeSim = new SwipeSimulator(newSwipeUser, db);
 	private int counter;
-
+	int swipeloop = 0;
+	int swipeEnable = 0;
     @Override
     public void init() throws ServletException
     {
@@ -44,6 +46,11 @@ public class IndexServlet extends HttpServlet {
 		Object password = req.getSession().getAttribute("password");
 		Object user = req.getSession().getAttribute("user");
 		User user2 = (User)user;
+		
+		//refresh page 
+		//resp.addHeader("Refresh", "5");
+		
+		
 		//HttpSession session= req.getSession(false); 
 		if (username == null || username.equals("") || password == null || password.equals(""))
 		{
@@ -53,6 +60,22 @@ public class IndexServlet extends HttpServlet {
 		else
 		{
 			req.getRequestDispatcher("/_view/index.jsp").forward(req, resp);
+		}
+		
+		// begin swipe stuff
+		if (swipeEnable==0){
+			swipeEnable = 1;
+			while (swipeloop < 399){
+				swipeSim.swipe(newSwipeUser, db, counter++);
+				swipeloop++;
+				//resp.addHeader("Refresh", "5");
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					//e.printStackTrace();
+				}
+			}
 		}
 	}
 	
@@ -93,11 +116,11 @@ public class IndexServlet extends HttpServlet {
 		{
 			resp.sendRedirect(req.getContextPath() + "/rockWall");
 		}
-		else if (req.getParameter("Test Button") != null)
-		{
-			swipeSim.swipe(newSwipeUser, db, counter++);
-			resp.sendRedirect(req.getContextPath() + "/index");
-		}
+//		else if (req.getParameter("Test Button") != null)
+//		{
+//			swipeSim.swipe(newSwipeUser, db, counter++);
+//			resp.sendRedirect(req.getContextPath() + "/index");
+//		}
 		else
 		{
 			throw new ServletException("Unknown Command");

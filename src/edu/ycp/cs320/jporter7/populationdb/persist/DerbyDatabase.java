@@ -475,6 +475,60 @@ public class DerbyDatabase implements IDatabase
 		
 	}
 	
+	
+	public ArrayList<User> getActiveUsersInRoom(String room)
+	{
+		//throw new UnsupportedOperationException();
+		//@Override
+		return executeTransaction(new Transaction<ArrayList<User>>()
+			{
+				@Override
+				public ArrayList<User> execute(Connection conn) throws SQLException
+				{
+					PreparedStatement stmt = null;
+					ResultSet resultSet = null;
+					try
+					{
+						stmt = conn.prepareStatement("select * from active"
+								+ " where active.room = ?");
+						stmt.setString(1, room);
+						
+						resultSet = stmt.executeQuery();
+						
+						ArrayList<User> result = new ArrayList<User>();
+						
+						boolean success = false;
+						while (resultSet.next())
+						{
+							//create user and load the attributes of the user to 
+							//a new user instance
+							User user = new User();
+							loadActiveUser(user, resultSet, 2);
+							
+							//add the user to the arraylist that will be returned
+							result.add(user);
+							success = true;
+						}
+						
+						if (!success) 
+						{
+							System.out.println("Something bad happend while looking for how many people were in the room");
+						}
+						
+						return result;
+					}
+					finally
+					{
+						DBUtil.closeQuietly(resultSet);
+						DBUtil.closeQuietly(stmt);
+					}
+					
+			}
+		});
+		
+	}
+	
+	
 	public ArrayList<User> getActiveUsers()
 	{
 		//throw new UnsupportedOperationException();
